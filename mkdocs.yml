@@ -1,0 +1,85 @@
+site_name: AI Math Foundations for IT Professionals
+site_description: Incremental, practical AI math with notebooks and IT examples.
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: grey
+      accent: grey
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: grey
+      accent: grey
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+
+markdown_extensions:
+  - pymdownx.snippets:
+      base_path:
+        - docs
+  - abbr
+  - admonition
+  - attr_list
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.arithmatex:
+      generic: true
+      block_syntax:
+        - dollar
+        - square
+      inline_syntax:
+        - dollar
+        - round
+      smart_dollar: true
+  - pymdownx.superfences
+  - md_in_html
+  - def_list
+
+
+
+extra_javascript:
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+plugins:
+  - search
+  - mkdocs-jupyter
+
+
+nav:
+  - Home: index.md
+  - Roadmap: roadmap.md
+  - Overview: overview.md
+  - Modules:
+      - 01) Tokenization: modules/01-tokenization.md
+      - 02) Probability: modules/02-probability.md
+      - 03) Logits & Softmax: modules/03-logits-softmax.md
+      - 04) Entropy: modules/04-entropy.md
+      - 05) Variance & Std Dev: modules/05-variance-stddev.md
+      - 06) Determinism: modules/06-determinism.md
+      - 07) Regression: modules/07-regression.md
+      - 08) Classification & Calibration: modules/08-classification-calibration.md
+      - 09) Correlation vs Causation: modules/09-correlation-causation.md
+      - 10) Sampling Controls: modules/10-sampling-controls.md
+      - 11) Guardrails & Thresholds: modules/11-guardrails-thresholds.md
+      - 12) Evaluation in Production: modules/12-evaluation-in-production.md
+  - Notebook Labs: notebooks.md
+  - Notebook Code Reference: notebook-code-reference.md
+  - Assessment: assessment.md
+  - Ops Decision Guide: ops-decision-guide.md

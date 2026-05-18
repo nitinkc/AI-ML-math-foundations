@@ -1,0 +1,74 @@
+*[Token]: A chunk of text the model reads or emits; token count drives context usage and cost.
+*[Logit]: Raw model score before probabilities are computed.
+*[Logits]: Raw model scores before probabilities are computed.
+*[Softmax]: Function that converts logits into a normalized probability distribution.
+*[temperature]: Scales logits before sampling. Lower values are more deterministic; higher values increase diversity.
+*[Temperature]: Scales logits before sampling. Lower values are more deterministic; higher values increase diversity.
+*[top_p]: Nucleus sampling: keep the smallest set of tokens whose cumulative probability reaches p.
+*[nucleus sampling]: Sampling from the smallest token set whose cumulative probability is at least p.
+*[top-k]: Keep only the k highest-probability tokens before sampling.
+*[top_k]: Keep only the k highest-probability tokens before sampling.
+*[min-p]: Keep tokens with probability at least min_p multiplied by the max token probability.
+*[typical-p]: Typical sampling: prefer tokens whose surprise is close to the distribution entropy.
+*[entropy]: Measure of uncertainty in a distribution; higher entropy means more randomness and spread.
+*[Entropy]: Measure of uncertainty in a distribution; higher entropy means more randomness and spread.
+*[decoding]: The process of selecting each next token from model probabilities.
+*[Decoding]: The process of selecting each next token from model probabilities.
+*[sampling]: Randomized next-token selection from a filtered probability distribution.
+*[Sampling]: Randomized next-token selection from a filtered probability distribution.
+*[Top-p]: Nucleus sampling: keep the smallest set of tokens whose cumulative probability reaches p.
+*[Top-k]: Keep only the k highest-probability tokens before sampling.
+*[Min-p]: Keep tokens with probability at least min_p multiplied by the max token probability.
+*[Typical-p]: Typical sampling: prefer tokens whose surprise is close to the distribution entropy.
+*[Nucleus sampling]: Sampling from the smallest token set whose cumulative probability is at least p.
+*[Rag]: Retrieval Augmented Generation: inject retrieved context into prompts for grounded answers.
+*[rag]: Retrieval Augmented Generation: inject retrieved context into prompts for grounded answers.
+*[structured outputs]: Constrain responses to a schema (for example JSON) so downstream code parses reliably.
+*[Structured outputs]: Constrain responses to a schema (for example JSON) so downstream code parses reliably.
+*[determinism]: Behavior where repeated runs produce the same or nearly the same outputs.
+*[Determinism]: Behavior where repeated runs produce the same or nearly the same outputs.
+*[repetition penalty]: Penalty that reduces likelihood of already-used tokens to discourage loops.
+*[Repetition penalty]: Penalty that reduces likelihood of already-used tokens to discourage loops.
+*[hallucination]: Fluent model output that is unsupported or incorrect.
+*[Hallucination]: Fluent model output that is unsupported or incorrect.
+*[prompt]: Input instructions and context sent to the model.
+*[Prompt]: Input instructions and context sent to the model.
+*[context window]: Maximum number of tokens a model can consider in one request.
+*[Context window]: Maximum number of tokens a model can consider in one request.
+*[RAG]: Retrieval Augmented Generation: inject retrieved context into prompts for grounded answers.
+*[structured output]: Constrain responses to a schema (for example JSON) so downstream code parses reliably.
+*[Structured output]: Constrain responses to a schema (for example JSON) so downstream code parses reliably.
+*[JSON Schema]: A formal schema describing expected JSON fields, types, and constraints.
+*[variance]: Average squared distance from the mean; measures spread in outcomes.
+*[Variance]: Average squared distance from the mean; measures spread in outcomes.
+*[standard deviation]: Square root of variance; spread in original units.
+*[Standard deviation]: Square root of variance; spread in original units.
+*[regression]: Predicting a numeric value from input features.
+*[Regression]: Predicting a numeric value from input features.
+*[residual]: Difference between observed value and predicted value.
+*[Residual]: Difference between observed value and predicted value.
+*[MAE]: Mean Absolute Error; average absolute prediction error.
+*[RMSE]: Root Mean Squared Error; penalizes larger prediction errors more strongly.
+*[classification]: Predicting a category label from input features.
+*[Classification]: Predicting a category label from input features.
+*[calibration]: Alignment between predicted probabilities and observed frequencies.
+*[Calibration]: Alignment between predicted probabilities and observed frequencies.
+*[threshold]: Probability cutoff used to decide between automated action and fallback.
+*[Threshold]: Probability cutoff used to decide between automated action and fallback.
+*[precision]: Of predicted positives, the fraction that are correct.
+*[recall]: Of actual positives, the fraction that are recovered.
+*[correlation]: Statistical association between two variables; does not prove causation.
+*[Correlation]: Statistical association between two variables; does not prove causation.
+*[causation]: A cause-effect relationship where one factor directly influences another.
+*[Causation]: A cause-effect relationship where one factor directly influences another.
+*[confounder]: Hidden factor that influences both variables and can mislead conclusions.
+*[Confounder]: Hidden factor that influences both variables and can mislead conclusions.
+*[guardrail]: Policy control that constrains or redirects model behavior for safety.
+*[Guardrail]: Policy control that constrains or redirects model behavior for safety.
+*[KPI]: Key Performance Indicator used to evaluate operational outcomes.
+*[drift]: Change in data or model behavior over time that can degrade quality.
+*[Drift]: Change in data or model behavior over time that can degrade quality.
+*[confidence interval]: Estimated range likely to contain the true metric value.
+*[Confidence interval]: Estimated range likely to contain the true metric value.
+*[rollback]: Reverting to a previous known-good model or configuration after degradation.
+*[Rollback]: Reverting to a previous known-good model or configuration after degradation.
