@@ -62,6 +62,7 @@ plugins:
 nav:
   - Home: index.md
   - Modules:
+      - 00) The Story: modules/00-story.md
       - 01) Tokenization: modules/01-tokenization.md
       - 02) Probability: modules/02-probability.md
       - 03) Logits & Softmax: modules/03-logits-softmax.md
@@ -74,9 +75,33 @@ nav:
       - 10) Sampling Controls: modules/10-sampling-controls.md
       - 11) Guardrails & Thresholds: modules/11-guardrails-thresholds.md
       - 12) Evaluation in Production: modules/12-evaluation-in-production.md
+      - 13) Bias & Fairness: modules/13-bias-fairness.md
+      - 14) Interpretability: modules/14-interpretability.md
+      - 15) Adversarial Testing: modules/15-adversarial-testing.md
+      - 16) Human in the Loop: modules/16-human-in-the-loop.md
+      - 17) Fine-Tuning: modules/17-fine-tuning.md
+      - 18) RAG: modules/18-rag.md
+      - 19) Cost & Latency: modules/19-cost-latency.md
+      - 20) Drift & Retraining: modules/20-drift-retraining.md
+      - 21) Incident Postmortem: modules/21-incident-postmortem.md
+  - Labs:
+      - 00) Warmup Sandbox: notebooks/00_sandbox.ipynb
+      - 01) Tokenization Lab: notebooks/01_tokenization.ipynb
+      - 02) Probability Lab: notebooks/02_probability.ipynb
+      - 03) Logits & Softmax Lab: notebooks/03_logits_softmax.ipynb
+      - 04) Entropy Lab: notebooks/04_entropy.ipynb
+      - 05) Variance & Std Dev Lab: notebooks/05_variance_stddev.ipynb
+      - 06) Determinism Lab: notebooks/06_determinism.ipynb
+      - 07) Regression Lab: notebooks/07_regression.ipynb
+      - 08) Classification & Calibration Lab: notebooks/08_classification_calibration.ipynb
+      - 09) Correlation vs Causation Lab: notebooks/09_correlation_causation.ipynb
+      - 10) Sampling Controls Lab: notebooks/10_sampling_controls.ipynb
+      - 11) Guardrails & Thresholds Lab: notebooks/11_guardrails_thresholds.ipynb
+      - 12) Evaluation in Production Lab: notebooks/12_eval_in_production.ipynb
+  - Reference:
+      - Notebook Code Reference: reference.md
   - Math Foundations:
       - Probability Distributions Guide: probability-distributions-guide.md
-      - Visualizing Distributions: notebooks/00_sandbox.ipynb
+      - Visualizing Distributions (Sandbox): notebooks/00_sandbox.ipynb
       - Gaussian SnP500: notebooks/gaussianSnP500.ipynb
-  - Lab Reference: reference.md
   - Ops Cheatsheet: ops-cheatsheet.md

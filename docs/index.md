@@ -6,12 +6,12 @@ Quick-access index. All content lives in four nav pages below.
 
 ## What each page is
 
-| Page | What it covers |
-|---|---|
-| **Modules 01–12** | All 12 lesson pages — token → logit → probability → entropy → variance → regression → guardrails → evaluation |
-| **Reference** | All formulas, code explanations, and distribution guide in one place |
-| **Ops Cheatsheet** | Routing policy, rollout gates, audit fields, review checklist, and self-check questions |
-| **Notebook Labs** | Links to all 13 Jupyter notebooks with lab descriptions |
+| Page               | What it covers                                                                                                |
+|:-------------------|:--------------------------------------------------------------------------------------------------------------|
+| **Modules 01–12**  | All 12 lesson pages — token → logit → probability → entropy → variance → regression → guardrails → evaluation |
+| **Reference**      | All formulas, code explanations, and distribution guide in one place                                          |
+| **Ops Cheatsheet** | Routing policy, rollout gates, audit fields, review checklist, and self-check questions                       |
+| **Notebook Labs**  | Links to all 13 Jupyter notebooks with lab descriptions                                                       |
 
 ---
 
