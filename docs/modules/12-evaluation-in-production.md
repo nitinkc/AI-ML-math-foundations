@@ -1,61 +1,70 @@
 # Module 12: Evaluation in Production
 
-## Plain-English first
+## What's the big idea?
 
-Offline metrics are necessary but not sufficient.
-Production evaluation asks: is the system still delivering value safely over time?
+You built an AI system. Tested it offline. Looks great on the validation set.
 
-For IT copilots, focus on measurable outcomes:
+So you deploy it... and the real world isn't the test set.
 
-- resolution time
-- escalation accuracy
-- analyst override rate
-- user satisfaction trend
+**Production evaluation** is your safety net. It asks: *Is this actually working in the real world, right now?*
 
-## Minimal math second
+Don't just measure accuracy. Measure what matters operationally:
+- How fast are tickets getting resolved?
+- Are escalations actually accurate?
+- How often do analysts override the system?
+- Are users happy?
 
-Track weighted portfolio quality:
+These numbers tell you if you should expand, pause, or rollback.
+
+## The math in plain terms
+
+Most production systems need to balance multiple metrics. Use a weighted KPI:
 
 $$
 KPI_{weighted}=\sum_{i=1}^{n} w_i m_i
 $$
 
-- $m_i$: normalized metric score (for example precision, SLA hit-rate)
-- $w_i$: business weight for that metric
+- $m_i$ is each metric you care about (accuracy, SLA hit-rate, etc.)
+- $w_i$ is how much you weight that metric (based on business importance)
 
-Decision this supports:
+**Translation:** Some metrics matter more than others. Accuracy might be 40% of your score, SLA hit-rate 35%, analyst override rate 25%. Sum them up, you get one number that tells you go/no-go.
 
-**Can we safely expand rollout, or should we pause and remediate based on KPI movement?**
+## Real-world scenario: Phased rollout gate
 
-## IT scenario: Phased rollout gate
+You roll out your new AI copilot in phases:
 
-At 10% traffic, KPIs are stable.
-At 50% traffic, override rate and incident miss-rate worsen.
+**10% traffic:** KPIs look good. Resolution time ↓, overrides ↓, SLA ↑.
+→ Go to 25%.
 
-A weighted KPI gate can trigger hold-and-fix before full rollout.
+**25% traffic:** Still looking solid.
+→ Go to 50%.
 
-## Notebook third
+**50% traffic:** Oh no. Override rate shoots up. Incident miss-rate climbs. Weighted KPI drops below your gate threshold.
+→ HOLD. Don't go further.
 
-Run `notebooks/math-foundations/12_eval_in_production.ipynb` to:
+Now you investigate, fix the issue, retest. Only then proceed.
 
-- aggregate multiple metrics into a weighted KPI score
-- compare baseline vs new model over weekly windows
-- simulate go / hold / rollback gating rules
+If you didn't have this gate, you'd have rolled out broken system to 100% of traffic. Disaster.
 
-## Pitfall and anti-pitfall
+## How to try this
 
-- Pitfall: optimizing one metric while harming operations elsewhere
-- Anti-pitfall: evaluate with a balanced KPI set tied to business outcomes
+Run `notebooks/math-foundations/12_eval_in_production.ipynb` and:
 
-## Quick checklist
+- Combine multiple metrics into a single weighted KPI
+- Compare baseline vs new model over weekly windows
+- Simulate go/hold/rollback decisions based on KPI thresholds
 
-- Are rollout gates defined before release?
-- Are KPIs monitored by segment and risk class?
-- Is drift monitored with alert thresholds?
-- Is rollback criteria explicit and tested?
+## The traps to avoid
 
-## From math to decision
+❌ **The trap:** Optimize one metric (accuracy) while everything else falls apart  
+✅ **The smart move:** Monitor a balanced KPI set tied to business outcomes
 
-Evaluation metrics become governance controls only when they are tied to explicit rollout and rollback actions.
+## Checklist for you
+
+- [ ] Are rollout gates defined *before* launch?
+- [ ] Are KPIs monitored by segment (e.g., queue, urgency, geography)?
+- [ ] Is metric drift detected with alert thresholds?
+- [ ] Are rollback criteria explicit and pre-approved?
+- [ ] Do you have a post-incident review process?
 
 --8<-- "_abbreviations.md"

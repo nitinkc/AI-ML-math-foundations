@@ -52,8 +52,6 @@ markdown_extensions:
   - md_in_html
   - def_list
 
-
-
 extra_javascript:
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 
@@ -61,11 +59,8 @@ plugins:
   - search
   - mkdocs-jupyter
 
-
 nav:
   - Home: index.md
-  - Roadmap: roadmap.md
-  - Overview: overview.md
   - Modules:
       - 01) Tokenization: modules/01-tokenization.md
       - 02) Probability: modules/02-probability.md
@@ -79,7 +74,9 @@ nav:
       - 10) Sampling Controls: modules/10-sampling-controls.md
       - 11) Guardrails & Thresholds: modules/11-guardrails-thresholds.md
       - 12) Evaluation in Production: modules/12-evaluation-in-production.md
-  - Notebook Labs: notebooks.md
-  - Notebook Code Reference: notebook-code-reference.md
-  - Assessment: assessment.md
-  - Ops Decision Guide: ops-decision-guide.md
+  - Math Foundations:
+      - Probability Distributions Guide: probability-distributions-guide.md
+      - Visualizing Distributions: notebooks/00_sandbox.ipynb
+      - Gaussian SnP500: notebooks/gaussianSnP500.ipynb
+  - Lab Reference: reference.md
+  - Ops Cheatsheet: ops-cheatsheet.md

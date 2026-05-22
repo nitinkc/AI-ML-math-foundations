@@ -1,7 +1,5 @@
 # Notebook Code Explanations and Math Reference
 
-This page explains the code and the math behind each notebook lab.
-
 ## Lab 00: Warmup
 
 ### Basic Probability Calculation
@@ -19,6 +17,8 @@ P(i) = \frac{v_i}{\sum_j v_j}
 $$
 
 ### Softmax Formula
+
+Also check Pre-Activation
 
 $$
 P(i) = \frac{e^{z_i}}{\sum_j e^{z_j}}
@@ -56,7 +56,6 @@ $$
 Operational decisions:
 
 - Short tickets: keep full history.
-
 - Long tickets: summarize or trim history.
 
 The key idea is that token budget is a capacity constraint, similar to memory limits.
@@ -374,9 +373,7 @@ else:
 Decision bands:
 
 - `delta >= 0.01`: expand rollout.
-
 - `-0.01 < delta < 0.01`: hold and monitor.
-
 - `delta <= -0.01`: rollback.
 
 Predefined gates prevent subjective rollout decisions under pressure.
@@ -386,12 +383,6 @@ Predefined gates prevent subjective rollout decisions under pressure.
 ## General Tips for Code and Math
 
 1. Validate assumptions (probabilities sum to 1, thresholds documented).
-
 2. Write formulas first, then code.
-
 3. Test edge cases.
-
 4. Monitor operational metrics, not only prediction outputs.
-
---8<-- "_abbreviations.md"
-

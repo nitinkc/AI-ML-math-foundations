@@ -1,64 +1,129 @@
 # Module 1: Tokenization and Vocabulary
 
-## Plain-English first
+## The big idea, simply put
 
-Imagine your service desk ticket says: "VPN still disconnects every 5 minutes after latest patch."
+Your AI model doesn't read sentences. It reads **chunks**.
 
-The model does **not** read this as one sentence.
-It reads pieces called [Token]s.
-Those pieces consume your [context window], impact response time, and increase request cost.
-If you exceed budget, useful details are truncated and quality drops.
+Take this service desk ticket:
 
-## Minimal math second
+> *"VPN still disconnects every 5 minutes after latest patch. Please help ASAP."*
 
-Use one planning formula:
+Before the model processes a single word, it chops that sentence into **tokens** — the raw units it thinks in. Here's what that actually looks like:
+
+```
+["VP", "N", " still", " disconnect", "s", " every", " 5", " minutes",
+ " after", " latest", " patch", ".", " Please", " help", " AS", "AP", "."]
+```
+
+That's **17 tokens** for one short sentence. Notice a few things:
+- "VPN" splits into `VP` + `N` — the model has never "seen" VPN as one word
+- "disconnects" splits into `disconnect` + `s`
+- "ASAP" splits into `AS` + `AP`
+
+This isn't a bug. It's how models handle words they weren't trained on, technical jargon, and unusual capitalization. Roughly speaking: **1 token ≈ ¾ of an English word**, or about 4 characters.
+
+Now compare that to a longer ticket:
+
+> *"Hi team, this is a follow-up to ticket #4821. Since the patch deployed Tuesday, our VPN client disconnects every 5 minutes for all remote staff in the APAC region. We've tried reinstalling, cleared DNS cache, tested on 3 different machines. Issue persists. Senior engineer Sarah has escalated this internally. We need resolution before the board meeting Thursday 9am SGT."*
+
+That's roughly **90 tokens** — five times more — and it still hasn't included any system instructions, conversation history, or space for the model to write a response.
+
+**This is why tokens matter**: you have a fixed budget per request. Blow the budget, and something gets cut.
+
+---
+
+## The math that matters
+
+Think of your token budget like packing a suitcase with a strict weight limit:
 
 $$
 T_{total} = T_{system} + T_{history} + T_{user} + T_{output}
 $$
 
-- $T_{total}$: total tokens in one request
-- $T_{system}$: system instructions and guardrails
-- $T_{history}$: prior conversation turns
-- $T_{user}$: latest user input
-- $T_{output}$: response budget you reserve
+| Part | What it is | Example size |
+|---|---|---|
+| $T_{system}$ | Your instructions to the model ("You are a helpful IT assistant...") | 200–800 tokens |
+| $T_{history}$ | Every prior message in the conversation | Grows fast — 50 turns ≈ 5,000+ tokens |
+| $T_{user}$ | The current ticket or message | 20–300 tokens |
+| $T_{output}$ | Space reserved for the model's reply | 500–2,000 tokens |
 
-Operational rule:
+**The hard rule: $T_{total}$ cannot exceed your context window.** Most models today allow 8,000–200,000 tokens, but cheaper/faster tiers cap at 4,000–8,000. If you hit the wall, the model silently drops the oldest messages — and with them, critical context.
 
-$$
-T_{total} \le T_{window}
-$$
+---
 
-If this is false, you must trim or summarize context.
+## Watch tokenization happen on a real ticket
 
-## IT scenario: Service desk copilot
+Here's the same escalation ticket, processed three different ways depending on budget:
 
-- A short ticket (password reset) fits easily and routes quickly.
-- A long outage thread with pasted logs can exceed budget.
-- If old context is dropped, the model may lose escalation cues.
+**Scenario A — Plenty of budget (32k context)**
+```
+System prompt:          600 tokens
+Conversation (8 turns): 2,400 tokens
+Current ticket:         90 tokens
+Reserved output:        1,000 tokens
+─────────────────────────────────────
+Total:                  4,090 / 32,000  ✅ Fine
+```
+Full history kept. Model can see that this ticket is a follow-up to #4821. Response is accurate.
 
-Decision this formula supports:
+**Scenario B — Tight budget (4k context)**
+```
+System prompt:          600 tokens
+Conversation (8 turns): 2,400 tokens
+Current ticket:         90 tokens
+Reserved output:        1,000 tokens
+─────────────────────────────────────
+Total:                  4,090 / 4,000  ❌ Over by 90 tokens
+```
+System silently drops the oldest 2 conversation turns to fit. The model loses the detail that Sarah already escalated this. It suggests escalation — wasting everyone's time.
 
-**Do we keep raw history, summarize it, or drop low-value turns before inference?**
+**Scenario C — Smart summarization**
+```
+System prompt:          600 tokens
+Summarized history:     300 tokens  ← compressed 8 turns into a summary
+Current ticket:         90 tokens
+Reserved output:        1,000 tokens
+─────────────────────────────────────
+Total:                  1,990 / 4,000  ✅ Comfortable, nothing lost
+```
+Summarize old turns before they eat your budget. The model still knows the full story.
 
-## Notebook third
+---
 
-Run `notebooks/math-foundations/01_tokenization.ipynb` to:
+## The trap most people fall into
 
-- Compare token-like counts across short vs long tickets
-- Simulate truncation under a fixed budget
-- Validate a simple "summarize then infer" strategy
+> **"I'll just count the user's message length."**
 
-## Pitfall and anti-pitfall
+Wrong. A user's message is usually the *smallest* part of the budget. Here's what a real service desk copilot actually spends tokens on:
 
-- Pitfall: tracking only user message length and ignoring hidden prompt/history cost
-- Anti-pitfall: reserve output tokens first, then back into safe input budget
+```
+Your system prompt alone:  ~600 tokens
+("You are an IT helpdesk assistant. Always ask for the ticket number.
+Escalate P1 issues within 15 minutes. Never suggest rebooting without
+first checking patch history. Use the following knowledge base...")
+```
 
-## Quick checklist
+That's 600 tokens *before the user types a single word*. Add 10 turns of conversation history and you've spent 3,000 tokens before the current question arrives.
 
-- Do you know your typical total token range per request?
-- Do you reserve output tokens for worst-case answers?
-- Do you summarize long histories before classification?
-- Do you alert when truncation starts happening frequently?
+**The smart move:** Reserve your output budget first (worst-case response length), then see what's left for input. Work backwards, not forwards.
+
+---
+
+## How to practice this
+
+Open `notebooks/math-foundations/01_tokenization.ipynb` and you'll:
+
+1. Paste real service desk tickets and see the exact token count
+2. Watch what gets dropped when you exceed your budget
+3. Build a summarizer that compresses old turns before they fill your window
+
+---
+
+## Checklist before you ship
+
+- [ ] Do you know your typical token spend per request (system + history + user + output)?
+- [ ] Are you reserving output tokens *before* filling input?
+- [ ] Do long conversations get summarized rather than just truncated?
+- [ ] Do you log when truncation starts happening often? (It means your prompts are growing)
 
 --8<-- "_abbreviations.md"

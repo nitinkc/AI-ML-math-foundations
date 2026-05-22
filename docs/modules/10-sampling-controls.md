@@ -1,60 +1,63 @@
 # Module 10: Sampling Controls
 
-## Plain-English first
+## What's the big idea?
 
-Sampling controls decide how conservative or creative model output is.
+After a model generates logits and softmax turns them into probabilities, you still have a choice: pick the winner deterministically, or let randomness decide?
 
-- Lower [temperature] usually increases reliability and repeatability.
-- Higher [temperature] can increase variety but also risk.
-- [top_p] and [top-k] narrow the candidate token set before selection.
+And even if you do add randomness, which options are even *allowed* to compete?
 
-These controls are operations knobs, not just prompt tweaks.
+That's what **sampling controls** do. They're the knobs you twist to control reliability vs creativity.
 
-## Minimal math second
+- **Low [temperature]**: Ignore weak options, play it safe. Boring but consistent.
+- **High [temperature]**: All options on the table. Spicy and unpredictable.
+- **[top_p] and [top_k]**: "Only consider the top-K options" or "only options that sum to top P%."
 
-After filtering candidates, probabilities are renormalized:
+## The math in plain terms
+
+After you apply top-p or top-k filtering, the probabilities need to be rescaled so they still sum to 1:
 
 $$
 P'(i)=\frac{P(i)}{\sum_{j \in S} P(j)} \quad \text{for } i \in S
 $$
 
-Where $S$ is the kept token set after top-p/top-k filtering.
+Where $S$ is the set of options you kept after filtering.
 
-Decision this supports:
+**Translation:** If you only keep the top 5 options (top-k=5), you scale them up so their sum is 100%.
 
-**Which decoding profile should be default for production-safe responses vs exploratory drafting?**
+## Real-world scenario: Summary profile presets
 
-## IT scenario: Summary profile presets
+For your IT copilot, you might define two profiles:
 
-For service desk summaries you might define:
+**Safe profile (compliance notes):**
+- Low temperature (0.3): Very focused
+- Tight top-p (0.9): Only strong options
 
-- Safe profile: low temperature, tighter top-p
-- Creative profile: moderate temperature, broader top-p
+**Creative profile (draft suggestions):**
+- Moderate temperature (1.2): More diverse
+- Broader top-p (0.95): More options on the table
 
-Route by use case: compliance notes use safe profile; optional draft replies may use creative profile.
+Route by use case: compliance-critical notes use safe profile. Optional draft suggestions use creative profile.
 
-## Notebook third
+Then your system can say: "This is a compliance note, using safe settings—expect repetability."
 
-Run `notebooks/math-foundations/10_sampling_controls.ipynb` to:
+## How to try this
 
-- apply top-k and top-p filtering to toy distributions
-- compare renormalized distributions under different settings
-- inspect diversity vs concentration metrics
+Run `notebooks/math-foundations/10_sampling_controls.ipynb` and:
 
-## Pitfall and anti-pitfall
+- Apply top-k and top-p filtering to probability distributions
+- See how probabilities get rescaled
+- Compare output diversity under different settings
 
-- Pitfall: one global sampling profile for all tasks and risk levels
-- Anti-pitfall: maintain task-specific decoding profiles with change control
+## The traps to avoid
 
-## Quick checklist
+❌ **The trap:** One global sampling profile for every task  
+✅ **The smart move:** Define task-specific profiles, document them, version control them
 
-- Are decoding presets documented by business risk tier?
-- Are temperature and top-p changes tracked in release notes?
-- Is compliance-sensitive output using conservative settings?
-- Do you evaluate output drift after decoding changes?
+## Checklist for you
 
-## From math to decision
-
-Sampling controls should be governed like any production configuration: versioned, tested, and tied to measurable outcomes.
+- [ ] Are your decoding profiles documented by business use case?
+- [ ] Do you track temperature and top-p changes in release notes?
+- [ ] Do compliance-critical outputs use conservative settings?
+- [ ] Do you monitor output drift after making sampling changes?
 
 --8<-- "_abbreviations.md"

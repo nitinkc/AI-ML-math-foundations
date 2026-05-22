@@ -1,58 +1,59 @@
 # Module 8: Classification and Calibration
 
-## Plain-English first
+## What's the big idea?
 
-Classification predicts a category with a probability.
-Calibration checks whether that probability matches reality over time.
+Classification is straightforward: predict a category with a confidence number.
 
-If a model says "0.80 confidence" for many tickets,
-about 80% of those should actually be correct.
-If not, your thresholds may create risk.
+Calibration is the hard part: **Does that confidence number actually mean what it says?**
 
-## Minimal math second
+Let's say your model says "I'm 80% confident" on 100 different tickets. In a perfect world, about 80 of those predictions are actually correct. But what if only 60 are? Or 95? That's a problem.
 
-Threshold decision rule:
+When predictions drift from reality, your thresholds become unreliable, and your decisions backfire.
+
+## The math in plain terms
+
+Here's how you make a decision based on a threshold:
 
 $$
 \hat{y} =
 \begin{cases}
-1, & p \ge \tau \\
-0, & p < \tau
+\text{yes/auto-route}, & p \ge \tau \\
+\text{no/escalate}, & p < \tau
 \end{cases}
 $$
 
-- $p$: predicted class probability
-- $\tau$: decision threshold
+- $p$ is your predicted confidence 
+- $\tau$ (tau) is your decision threshold
 
-Decision this supports:
+**The calibration question:** When you set $\tau = 0.80$, and you auto-route 100 tickets, are about 80 of them actually correct?
 
-**What confidence level should trigger auto-action vs human review?**
+## Real-world scenario: Incident auto-escalation
 
-## IT scenario: Incident auto-escalation
+You're handling security tickets. You set different thresholds for different risks:
 
-For potential security tickets, you may set a lower threshold to reduce missed incidents.
-For low-risk categories, you may set a higher threshold to avoid false alarms.
+- **Low-risk category (e.g., password reset):** High threshold (0.95). Only auto-action if super confident. Fewer false alarms.
+- **High-risk category (e.g., potential breach):** Lower threshold (0.70). Flag more aggressively. Miss fewer incidents.
 
-Calibration ensures those thresholds remain trustworthy after model drift.
+Over weeks, you monitor: "Of tickets at 0.70 confidence we flagged as security, what % actually were?" If it's not ~70%, your threshold is off. Time to recalibrate.
 
-## Notebook third
+## How to try this
 
-Run `notebooks/math-foundations/08_classification_calibration.ipynb` to:
+Run `notebooks/math-foundations/08_classification_calibration.ipynb` and:
 
-- Evaluate threshold effects on precision and recall
-- Build a simple reliability table (predicted vs observed rate)
-- Compare policy outcomes under stricter and looser thresholds
+- See how different thresholds affect precision and recall
+- Build a table: predicted confidence vs actual accuracy rate
+- Compare outcomes under stricter vs looser policies
 
-## Pitfall and anti-pitfall
+## The traps to avoid
 
-- Pitfall: using one global threshold for all risk classes
-- Anti-pitfall: set class-specific thresholds and recalibrate periodically
+❌ **The trap:** One global threshold for all risk classes  
+✅ **The smart move:** Use class-specific thresholds AND recalibrate every month
 
-## Quick checklist
+## Checklist for you
 
-- Is each threshold tied to business risk tolerance?
-- Do you monitor precision/recall by class?
-- Do calibration checks run on fresh production-like data?
-- Are low-confidence outputs routed to safe fallback paths?
+- [ ] Is each threshold tied to your business risk tolerance?
+- [ ] Do you monitor precision/recall by class, not just overall?
+- [ ] Do you recalibrate on fresh production-like data?
+- [ ] Are low-confidence outputs routed to safe fallback paths?
 
 --8<-- "_abbreviations.md"

@@ -1,10 +1,55 @@
-# AI Math Foundations (Standalone)
+# AI Math Foundations — Personal Reference
 
-This site is the dedicated home for the full math refresher track.
+Quick-access index. All content lives in four nav pages below.
 
-1. Start with the [Overview](overview.md)
-2. Review the [Roadmap](roadmap.md)
-3. Follow modules in order and use notebook labs for reinforcement
-4. Use the [Assessment](assessment.md) and [Ops Decision Guide](ops-decision-guide.md) for rollout readiness
+---
+
+## What each page is
+
+| Page | What it covers |
+|---|---|
+| **Modules 01–12** | All 12 lesson pages — token → logit → probability → entropy → variance → regression → guardrails → evaluation |
+| **Reference** | All formulas, code explanations, and distribution guide in one place |
+| **Ops Cheatsheet** | Routing policy, rollout gates, audit fields, review checklist, and self-check questions |
+| **Notebook Labs** | Links to all 13 Jupyter notebooks with lab descriptions |
+
+---
+
+## Concept chain (the single thread tying everything together)
+
+1. Ticket text is **tokenized** — budget determines how much history you can keep.
+2. Model outputs **logits** — raw preference scores per intent.
+3. **Softmax** converts logits to probabilities — normalized confidence values.
+4. **Entropy** measures how spread-out those probabilities are — high entropy → escalate.
+5. **Temperature / top-p / top-k** control how stochastic the sampling is.
+6. **Variance and std dev** catch run-to-run instability across repeated prompts.
+7. **Regression** predicts numeric outcomes like resolution hours from token count.
+8. **Classification + calibration** tunes thresholds so auto-routing is trustworthy.
+9. **Correlation ≠ causation** — segment before making policy changes.
+10. **Guardrail thresholds** map confidence to auto / review / abstain actions.
+11. **Weighted KPI** gates rollout decisions: go / hold / rollback.
+
+---
+
+## Key distribution cheatsheet
+
+| What you observe | Distribution |
+|---|---|
+| Single routing decision (right/wrong) | Bernoulli |
+| Correct routes out of N tickets | Binomial |
+| Average quality score across many runs | Normal (bell curve) |
+| Time between ticket arrivals | Exponential |
+| Incident count per hour | Poisson |
+| Token selection at high temperature | Approaches Uniform |
+
+---
+
+## Sprint outcomes at a glance
+
+**Sprint 1 (M1–M4):** tokens → probabilities → softmax → entropy.
+
+**Sprint 2 (M5–M8):** stability → determinism → regression → calibration.
+
+**Sprint 3 (M9–M12):** causation → sampling controls → guardrails → production evaluation.
 
 --8<-- "_abbreviations.md"
