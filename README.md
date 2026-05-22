@@ -2,6 +2,8 @@
 
 Standalone MkDocs project for the full AI math refresher track.
 
+[https://nitinkc.github.io/AI-ML-math-foundations/](https://nitinkc.github.io/AI-ML-math-foundations/)
+
 ## Quick start
 
 ```bash

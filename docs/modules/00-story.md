@@ -23,8 +23,9 @@ One ticket. Three possible things going on:
 doesn't just waste time — it leaves an active attacker inside the network while
 a tier-1 agent cheerfully sends a password reset link.
 
-This is the problem your AI copilot has to solve correctly, every time, at scale.
-Every module in this course adds one more layer of precision to that solution.
+This is the problem your AI copilot has to solve correctly, **every time, at scale**.
+
+Every module adds one more layer of precision to that solution.
 
 ---
 

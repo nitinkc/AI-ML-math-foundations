@@ -1,8 +1,9 @@
 # Module 2: Probability Refresher for AI
 
-## Start here: What does "0.72 probability" actually mean?
+## What does "0.72 probability" actually mean?
 
-Picture a traffic light. It doesn't tell you *whether* an accident will happen — it tells you *how much to trust* the current flow of traffic before you step on the gas.
+Picture a traffic light. It doesn't tell you *whether* an accident will happen — it tells you 
+*how much to trust* the current flow of traffic before you step on the gas.
 
 Model probabilities work the same way.
 
