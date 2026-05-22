@@ -119,6 +119,7 @@ No. Here's the mental model to replace that instinct:
 Imagine you flip a weighted coin that lands heads 82% of the time. If you route 1,000 tickets at 0.82 confidence, **180 of them are wrong.** At 100 tickets a day, that's 18 misrouted tickets daily — silently, with no error message, no alert, no warning.
 
 This is why you need:
+
 1. A **threshold policy** — written down, agreed upon, not just in someone's head
 2. A **fallback behavior** — what exactly happens when confidence is too low
 3. **Monitoring** — track whether your model's confidence distribution drifts week-over-week
