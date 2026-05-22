@@ -1,21 +1,20 @@
 # Module 2: Probability Refresher for AI
 
-## What does "0.72 probability" actually mean?
+## Start here: What does "0.576 probability" actually mean?
 
-Picture a traffic light. It doesn't tell you *whether* an accident will happen — it tells you 
-*how much to trust* the current flow of traffic before you step on the gas.
+Picture a traffic light. It doesn't tell you *whether* an accident will happen — it tells you *how much to trust* the current flow of traffic before you step on the gas.
 
 Model probabilities work the same way.
 
-When your classifier returns this for a service desk ticket:
+When your classifier returns this for the Monday ticket:
 
 ```
-account_unlock:    0.60
-vpn_issue:         0.25
-security_incident: 0.15
+account_unlock:    0.576
+vpn_issue:         0.386
+security_incident: 0.039
 ```
 
-It is **not** saying: *"I am 60% sure this is an account unlock."*
+It is **not** saying: *"I am 57.6% sure this is an account unlock."*
 
 It is saying: *"Given everything I've learned, account_unlock fits the pattern better than the other options — and here's how much better."*
 
@@ -35,7 +34,7 @@ $$
 1. All probabilities across all classes must add up to exactly 1 (100%)
 2. No probability can be negative or greater than 1
 
-**Why you should care operationally:** If your model outputs `[0.60, 0.25, 0.30]` — that sums to 1.15, not 1.0. That's a red flag. Either the output wasn't normalized, something broke in post-processing, or you're reading raw logits instead of probabilities. Any downstream routing logic built on that is already wrong.
+**Why you should care operationally:** If your model outputs `[0.576, 0.386, 0.100]` — that sums to 1.062, not 1.0. That's a red flag. Either the output wasn't normalized, something broke in post-processing, or you're reading raw logits instead of probabilities. Any downstream routing logic built on that is already wrong.
 
 > **Quick sanity check to run in every pipeline:**
 > ```python
@@ -56,24 +55,28 @@ Where $x_i$ is the cost (in minutes, dollars, headcount) for handling intent $i$
 
 ### Real example: staffing your Monday morning queue
 
-Say your model has classified today's incoming 500 tickets with these probabilities:
+Say your model has classified today's incoming 500 tickets with these probabilities
+(the same distribution as the Monday ticket):
 
 | Intent | Probability | Avg. Handle Time |
 |---|---|---|
-| `account_unlock` | 0.60 | 4 min |
-| `vpn_issue` | 0.25 | 18 min |
-| `security_incident` | 0.15 | 45 min |
+| `account_unlock` | 0.576 | 4 min |
+| `vpn_issue` | 0.386 | 18 min |
+| `security_incident` | 0.039 | 45 min |
+
+> **These are the canonical Monday ticket probabilities** — derived from logits
+> `[3.2, 2.8, 0.5]` via softmax (you'll see exactly how in Module 3).
 
 Expected handle time per ticket:
 
 $$
-\mathbb{E}[X] = (0.60 \times 4) + (0.25 \times 18) + (0.15 \times 45)
+\mathbb{E}[X] = (0.576 \times 4) + (0.386 \times 18) + (0.039 \times 45)
 $$
 $$
-= 2.4 + 4.5 + 6.75 = \textbf{13.65 minutes per ticket}
+= 2.304 + 6.948 + 1.755 = \textbf{11.01 minutes per ticket}
 $$
 
-500 tickets × 13.65 min = **6,825 minutes = ~114 agent-hours needed today.**
+500 tickets × 11.01 min = **5,505 minutes = ~92 agent-hours needed today.**
 
 Now you're not guessing at staffing. You're planning from data.
 
@@ -81,30 +84,38 @@ Now you're not guessing at staffing. You're planning from data.
 
 ## The routing decision: when to act, when to pause
 
-Back to that same ticket with these scores:
+Back to the Monday ticket with these scores:
 
 ```
-account_unlock:    0.60  ← top class
-vpn_issue:         0.25
-security_incident: 0.15
+account_unlock:    0.576  ← top class
+vpn_issue:         0.386
+security_incident: 0.039
 ```
 
 Your policy says: **auto-route only if the top class hits 0.80 confidence.**
 
 This ticket fails. Here's why that matters:
 
-The gap between `account_unlock` (0.60) and `vpn_issue` (0.25) is only 0.35. That's not decisive — it's uncertain. If you auto-route to account unlock and it's actually a VPN issue, you've just sent the ticket to the wrong team, wasted a handler's time, and frustrated the user.
+The gap between `account_unlock` (0.576) and `vpn_issue` (0.386) is only 0.190.
+That's not decisive — it's uncertain. If you auto-route to account unlock and it's
+actually a VPN issue, you've sent the ticket to the wrong team, wasted a handler's
+time, and frustrated the user. And if it's actually a security incident, the
+consequences are far worse.
 
-The correct response is to **route to clarification** — ask one confirming question, or send to a human reviewer — before taking action.
+The correct response is to **route to clarification** — ask one confirming question,
+or send to a human reviewer — before taking action.
+
+> **Note:** You'll see exactly where `[0.576, 0.386, 0.039]` comes from in Module 3.
+> For now, treat them as the model's output. Module 3 opens the black box.
 
 ### The confidence ladder (build this into your system)
 
-| Top class score | What it signals | What to do |
-|---|---|---|
-| ≥ 0.80 | High confidence | Auto-route to specialist queue |
-| 0.60 – 0.79 | Moderate confidence | Route with a flag: "verify before acting" |
-| 0.40 – 0.59 | Low confidence | Send to clarification queue |
-| < 0.40 | No clear winner | Escalate to human immediately |
+| Top class score | What it signals     | What to do                                |
+|-----------------|---------------------|-------------------------------------------|
+| ≥ 0.80          | High confidence     | Auto-route to specialist queue            |
+| 0.60 – 0.79     | Moderate confidence | Route with a flag: "verify before acting" |
+| 0.40 – 0.59     | Low confidence      | Send to clarification queue               |
+| < 0.40          | No clear winner     | Escalate to human immediately             |
 
 The exact thresholds are yours to tune — but **the ladder structure is non-negotiable.** A system with no middle tier will either over-automate (and make expensive mistakes) or under-automate (and defeat the point).
 
@@ -116,10 +127,16 @@ The exact thresholds are yours to tune — but **the ladder structure is non-neg
 
 No. Here's the mental model to replace that instinct:
 
-Imagine you flip a weighted coin that lands heads 82% of the time. If you route 1,000 tickets at 0.82 confidence, **180 of them are wrong.** At 100 tickets a day, that's 18 misrouted tickets daily — silently, with no error message, no alert, no warning.
+Imagine you flip a weighted coin that lands heads 82% of the time. If you route
+1,000 tickets at 0.82 confidence, **180 of them are wrong.** At 100 tickets a day,
+that's 18 misrouted tickets daily — silently, with no error message, no alert, no warning.
+
+Now apply that to your Monday ticket at 0.576. Route 1,000 tickets at that confidence:
+roughly **424 are wrong.** Nearly half. The model told you — through the low score,
+the thin margin of 0.190, and the ambiguous ticket language — that it wasn't sure.
+The number is the warning.
 
 This is why you need:
-
 1. A **threshold policy** — written down, agreed upon, not just in someone's head
 2. A **fallback behavior** — what exactly happens when confidence is too low
 3. **Monitoring** — track whether your model's confidence distribution drifts week-over-week
@@ -141,7 +158,7 @@ Open `notebooks/math-foundations/02_probability.ipynb` and work through:
 
 ## What to lock in before moving on
 
-- [ ] Can you explain why 0.72 probability ≠ "72% confirmed correct"?
+- [ ] Can you explain why 0.576 probability ≠ "57.6% confirmed correct"?
 - [ ] Do your pipeline's output probabilities always sum to 1? (add the assert check)
 - [ ] Is your threshold policy written down with explicit fallback behavior for each tier?
 - [ ] Are ambiguous tickets (0.40–0.60) going somewhere useful, not just silently dropped?

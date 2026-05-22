@@ -65,12 +65,11 @@ The model multiplies your context vector by its final classification layer to pr
 
 For the Monday ticket, the four-intent version looks like this:
 
-| Intent | Logit (raw score) |
-|:---|:---|
-| `account_unlock` | 3.2 |
-| `vpn_issue` | 2.8 |
-| `security_incident` | 0.5 |
-| `hardware_repair` | -2.1 |
+| Intent              | Logit (raw score) |
+|:--------------------|:------------------|
+| `account_unlock`    | 3.2               |
+| `vpn_issue`         | 2.8               |
+| `security_incident` | 0.5               |
 
 These numbers are arbitrary and don't add up to anything meaningful yet.
 
@@ -131,7 +130,7 @@ Notice: the logit gap between `account_unlock` and `vpn_issue` is only **0.4**
 
 ### 📊 Visualisation 1 — Default softmax distribution
 
-![m3_fig1_default_softmax.png](../notebooks/m3_fig1_default_softmax.png)
+![m3_fig1_default_softmax.png](../notebooks/visualizations/m3_fig1_default_softmax.png)
 
 ---
 
@@ -171,7 +170,7 @@ A logit gap of **3.8** produced a probability margin of **0.952**. Safe to auto-
 
 ### 📊 Visualisation 2 — Decisive vs ambiguous ticket side by side
 
-![m3_fig2_decisive_vs_ambiguous.png](../notebooks/m3_fig2_decisive_vs_ambiguous.png)
+![m3_fig2_decisive_vs_ambiguous.png](../notebooks/visualizations/m3_fig2_decisive_vs_ambiguous.png)
 ---
 
 ## The temperature dial: sharpening or softening the distribution
@@ -182,19 +181,19 @@ $$
 P_T(i) = \frac{e^{z_i / T}}{\sum_{j=1}^{n} e^{z_j / T}}, \quad T > 0
 $$
 
-| Temperature | Effect | When to use it |
-|:---|:---|:---|
-| $T = 1.0$ | Default — no change | Normal routing decisions |
-| $T < 1.0$ (e.g. 0.3) | Sharpens the winner — more decisive | Crisp single-intent routing |
+| Temperature          | Effect                                   | When to use it                     |
+|:---------------------|:-----------------------------------------|:-----------------------------------|
+| $T = 1.0$            | Default — no change                      | Normal routing decisions           |
+| $T < 1.0$ (e.g. 0.3) | Sharpens the winner — more decisive      | Crisp single-intent routing        |
 | $T > 1.0$ (e.g. 2.0) | Flattens the distribution — more options | Generating diverse draft responses |
 
 Applied to the Monday ticket logits `[3.2, 2.8, 0.5]`:
 
-| Temperature | account_unlock | vpn_issue | security_incident | Margin |
-|:---|:---|:---|:---|:---|
-| T = 0.3 | 0.910 | 0.089 | 0.001 | 0.821 |
-| **T = 1.0** | **0.576** | **0.386** | **0.039** | **0.190** |
-| T = 2.0 | 0.422 | 0.376 | 0.202 | 0.046 |
+| Temperature | account_unlock | vpn_issue | security_incident | Margin    |
+|:------------|:---------------|:----------|:------------------|:----------|
+| T = 0.3     | 0.910          | 0.089     | 0.001             | 0.821     |
+| **T = 1.0** | **0.576**      | **0.386** | **0.039**         | **0.190** |
+| T = 2.0     | 0.422          | 0.376     | 0.202             | 0.046     |
 
 At T = 0.3: looks decisive — but nothing changed in the underlying evidence.
 The model didn't get smarter. You turned up the confidence dial artificially.
@@ -203,7 +202,9 @@ At T = 2.0: `security_incident` jumps to 20%. Nearly indistinguishable from
 the other classes. If you were routing on this, you'd be acting on noise.
 
 **The critical rule:** Low temperature creates the *appearance* of certainty,
-not real certainty. For the Monday ticket — where a misrouted security incident
+not real certainty. 
+
+For the Monday ticket — where a misrouted security incident
 means a potential attacker stays on the network — forcing certainty via temperature
 hides the ambiguity rather than resolving it.
 
@@ -211,7 +212,8 @@ hides the ambiguity rather than resolving it.
 
 ### 📊 Visualisation 3 — Temperature effect on the Monday ticket
 
-![m3_fig3_temperature_effect.png](../notebooks/m3_fig3_temperature_effect.png)
+![m3_fig3_temperature_effect.png](../notebooks/visualizations/m3_fig3_temperature_effect.png)
+
 ---
 
 ## The metric that matters more than the top score
@@ -222,18 +224,18 @@ $$
 \text{margin} = P(\text{top-1}) - P(\text{top-2})
 $$
 
-| Ticket | Margin | Routing decision |
-|:---|:---|:---|
-| Monday ticket | 0.190 | 🔁 Clarification queue |
-| "Reset my password" | 0.952 | ✅ Auto-route |
+| Ticket              | Margin | Routing decision       |
+|:--------------------|:-------|:-----------------------|
+| Monday ticket       | 0.190  | 🔁 Clarification queue |
+| "Reset my password" | 0.952  | ✅ Auto-route           |
 
 A routing policy built on margin is more robust than one built on threshold alone:
 
-| Margin | Routing decision |
-|:---|:---|
-| ≥ 0.60 | Auto-route to specialist |
-| 0.30 – 0.59 | Route with human-review flag |
-| < 0.30 | Clarification queue or escalate |
+| Margin      | Routing decision                |
+|:------------|:--------------------------------|
+| ≥ 0.60      | Auto-route to specialist        |
+| 0.30 – 0.59 | Route with human-review flag    |
+| < 0.30      | Clarification queue or escalate |
 
 The Monday ticket has a margin of 0.190 — clarification queue regardless of
 temperature setting. The evidence is genuinely split.
