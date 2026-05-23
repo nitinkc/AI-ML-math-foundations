@@ -15,14 +15,14 @@ Without it, you're doing gut-feel rollouts — someone looks at overall accuracy
 
 ## Building the gate for the Monday ticket pipeline
 
-| Metric | Why it matters | Weight |
-|:---|:---|:---:|
-| Security incident FNR | Missing a security incident is the highest-cost failure | 30% |
-| Overall routing accuracy | General system health | 20% |
-| Calibration ECE | Can you trust the probabilities? | 15% |
-| Variance σ | Is the system stable run-to-run? | 15% |
-| P95 latency | Is it fast enough for analysts? | 10% |
-| Override rate (R2) | Is the model missing signals humans catch? | 10% |
+| Metric                   | Why it matters                                          | Weight |
+|:-------------------------|:--------------------------------------------------------|:------:|
+| Security incident FNR    | Missing a security incident is the highest-cost failure |  30%   |
+| Overall routing accuracy | General system health                                   |  20%   |
+| Calibration ECE          | Can you trust the probabilities?                        |  15%   |
+| Variance σ               | Is the system stable run-to-run?                        |  15%   |
+| P95 latency              | Is it fast enough for analysts?                         |  10%   |
+| Override rate (R2)       | Is the model missing signals humans catch?              |  10%   |
 
 Weights sum to 100%. Security incident FNR gets the highest weight because misrouting that class has consequences that dwarf all the others — as established in the stakes table from Module 00.
 
@@ -150,14 +150,14 @@ Continuous metric monitoring
 
 The gate doesn't produce new information. It combines everything already being collected:
 
-| Gate metric | Built in |
-|:---|:---|
-| Security FNR | Module 13 — Bias & Fairness |
+| Gate metric      | Built in                             |
+|:-----------------|:-------------------------------------|
+| Security FNR     | Module 13 — Bias & Fairness          |
 | Routing accuracy | Module 12 — Evaluation in Production |
-| Calibration ECE | Module 08 — Calibration |
-| Variance σ | Module 05 — Variance & Std Dev |
-| P95 latency | Module 19 — Cost & Latency |
-| Override rate R2 | Module 16 — Human-in-the-loop |
+| Calibration ECE  | Module 08 — Calibration              |
+| Variance σ       | Module 05 — Variance & Std Dev       |
+| P95 latency      | Module 19 — Cost & Latency           |
+| Override rate R2 | Module 16 — Human-in-the-loop        |
 
 When your security lead asks "why did you ship that model update on Tuesday?", you show them the gate scorecard. Every number has a source. Every decision has a trail.
 

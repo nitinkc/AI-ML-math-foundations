@@ -16,12 +16,12 @@ But then you segment.
 
 ## The disaggregated view
 
-| Segment | Tickets | Correct route | Accuracy |
-|:---|---:|---:|---:|
-| HQ employees | 620 | 581 | 93.7% |
-| Remote workers | 410 | 364 | 88.8% |
-| Non-native English writers | 195 | 158 | 81.0% |
-| Night-shift submissions | 140 | 109 | 77.9% |
+| Segment                    | Tickets | Correct route | Accuracy |
+|:---------------------------|:-------:|:-------------:|:--------:|
+| HQ employees               |   620   |      581      |  93.7%   |
+| Remote workers             |   410   |      364      |  88.8%   |
+| Non-native English writers |   195   |      158      |  81.0%   |
+| Night-shift submissions    |   140   |      109      |  77.9%   |
 
 Aggregate accuracy: **91.4%** — fine. But night-shift tickets are being correctly routed only **77.9%** of the time. That's a 15-point gap.
 
@@ -76,12 +76,12 @@ $$
 \text{FNR}_g = \frac{\text{security incidents misrouted in segment } g}{\text{total security incidents in segment } g}
 $$
 
-| Segment | Security incidents | Misrouted | FNR |
-|:---|---:|---:|---:|
-| HQ | 38 | 2 | 0.053 |
-| Remote | 27 | 3 | 0.111 |
-| Non-native English | 14 | 4 | 0.286 |
-| Night-shift | 11 | 5 | **0.455** |
+| Segment            | Security incidents  | Misrouted  |    FNR    |
+|:-------------------|:-------------------:|:----------:|:---------:|
+| HQ                 |         38          |     2      |   0.053   |
+| Remote             |         27          |     3      |   0.111   |
+| Non-native English |         14          |     4      |   0.286   |
+| Night-shift        |         11          |     5      | **0.455** |
 
 Nearly **half of security incidents from night-shift writers are being silently misrouted to tier-1 agents.** Remember the stakes table from Module 00: misrouting a security incident leaves a potential attacker inside the network while a tier-1 agent sends a password reset link. A 45.5% miss rate on that category is not a metrics problem — it's a security posture problem.
 
