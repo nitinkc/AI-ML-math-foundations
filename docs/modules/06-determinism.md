@@ -22,7 +22,7 @@ Suggested response: "Thanks for reaching out. Can you confirm which VPN client
                     you're using and whether this started after Friday's update?"
 ```
 
-Different queue. Different response. Same ticket.
+> **Different queue. Different response. Same ticket.**
 
 Your security lead asks: "Which one was right?" You can't answer — because you
 don't know if the difference is meaningful signal or random noise.
@@ -35,8 +35,8 @@ and whether you applied it to the right parts of the pipeline.**
 
 ## Deterministic mode: same input, always same output
 
-The deterministic rule is called **argmax** — always pick the class with the
-highest probability, no randomness involved:
+The deterministic rule is called **argmax** 
+— always pick the class with the **highest probability**, no randomness involved:
 
 $$
 \hat{i} = \arg\max_i \, P(i)
