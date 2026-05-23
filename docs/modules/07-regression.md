@@ -40,7 +40,7 @@ Ticket token count    Resolution time (minutes)
 ```
 
 Plot these and they form a rough line: more tokens, more time. Not perfectly linear,
-but close enough to be useful. Regression finds the line that fits this pattern best
+but close enough to be useful. Regression **finds the line that fits this pattern best**
 and lets you predict resolution time for any new ticket.
 
 ---
@@ -108,7 +108,7 @@ That's a staffing decision.
 The Monday ticket body-only residual is **+7.3 minutes** — the model predicted 14.7
 but actual resolution took 22 minutes. The model underestimated.
 
-Why? Because token count captures *length*, not *complexity*. The Monday ticket is
+Why? Because token count **captures *length*, not *complexity*.** The Monday ticket is
 short but involves three ambiguous intents, a potential security angle, and a
 time-sensitive client call. Those factors aren't in the token count.
 
