@@ -1,4 +1,4 @@
-# Module 6: Deterministic vs Stochastic Behavior
+# Module 6: Temperature - Deterministic vs Stochastic Behavior
 
 ## A tale of the same ticket, run twice
 
@@ -97,7 +97,6 @@ compliance-critical workflows, that's not a trade-off you can make.
 ---
 
 ## Temperature is the dial between the two
-
 Recall from Module 3: temperature $T$ controls how peaked or flat your
 probability distribution is before sampling.
 
@@ -132,7 +131,9 @@ security_incident: 0.20
 Now `security_incident` shows up 1 in 5 runs. You're pulling responses from
 a nearly flat distribution — mostly noise, very little signal.
 
-The practical takeaway: **temperature isn't just a creativity dial.
+The practical takeaway: 
+
+**temperature isn't just a creativity dial.
 It's a consistency dial. Turning it up in a routing step introduces the
 exact re-run inconsistency we saw at the top of this module.**
 
@@ -147,7 +148,7 @@ Your copilot does two fundamentally different things with the Monday ticket:
 The ticket goes to one queue. One decision. Permanent record.
 
 If your routing step uses stochastic sampling, you get the Tuesday re-run
-problem: different answer each time, no way to audit, no way to defend the
+problem: different answer each time, **no way to audit**, no way to defend the
 decision to a security lead or a compliance officer.
 
 ```
