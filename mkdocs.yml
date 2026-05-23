@@ -90,6 +90,7 @@ nav:
       - 03) Logits & Softmax: notebooks/visualizations/03_softmax_graphs.ipynb
       - 04) Entropy: notebooks/visualizations/04_entropy.ipynb
       - 05) Variance & Std Dev: notebooks/visualizations/05_variance_stddev.ipynb
+      - 10) Sampling Controls: notebooks/visualizations/10-sampling-controls-visualizations.ipynb
   - Labs:
       - Visualizing Distributions (Sandbox): notebooks/00_sandbox.ipynb
       - 00) Warmup: notebooks/00_warmup.ipynb
