@@ -36,6 +36,16 @@ moves. The averages are the same. The systems are completely different.
 
 ---
 
+### 📊 Visualisation 1 — 30 days of scores: the hidden story behind the average
+
+This is the first chart to run. It shows both configs over 30 days with the mean
+line drawn across both — so you can see that the same average hides completely
+different behaviour.
+
+![m5_fig1_30day_scores.png](../notebooks/visualizations/m5_fig1_30day_scores.png)
+
+---
+
 ## The math, built up from scratch
 
 Start with the mean — the centre of your distribution:
@@ -69,62 +79,66 @@ sits from the average.
 
 ---
 
+### 📊 Visualisation 2 — Squared deviations: why we square the gaps
+
+This chart shows the gap between each day's score and the mean for both configs —
+first raw (which cancels out), then squared (which reveals the true spread).
+The visual makes the squaring step feel necessary rather than arbitrary.
+
+![m5_fig2_squared_deviations.png](../notebooks/visualizations/m5_fig2_squared_deviations.png)
+
+---
+
 ## Calculated on our two configs
 
 **Config A** (scores hovering between 4.0 and 4.4):
 
 $$
-\mathrm{Var}(A) = \frac{1}{30}\sum(x_i - 4.2)^2 \approx 0.017
-$$
-$$
-\sigma_A = \sqrt{0.017} \approx 0.13
+\mathrm{Var}(A) = \frac{1}{30}\sum(x_i - 4.2)^2 \approx 0.017 \qquad \sigma_A \approx 0.13
 $$
 
 On any given day, Config A's quality score is typically within **±0.13** of 4.2.
-The tightest band imaginable for a live system.
 
 **Config B** (scores bouncing between 2.7 and 4.9):
 
 $$
-\mathrm{Var}(B) = \frac{1}{30}\sum(x_i - 4.2)^2 \approx 0.81
-$$
-$$
-\sigma_B = \sqrt{0.81} \approx 0.90
+\mathrm{Var}(B) = \frac{1}{30}\sum(x_i - 4.2)^2 \approx 0.81 \qquad \sigma_B \approx 0.90
 $$
 
-On any given day, Config B's quality score is typically within **±0.90** of 4.2.
-That means a "normal" day could land anywhere from 3.3 to 5.0.
+On any given day, Config B's quality score is typically within **±0.90** of 4.2 —
+anywhere from 3.3 to 5.1 on a "normal" day.
 
 | Config | Mean | Std Dev | Worst realistic day | Deploy? |
 |---|---|---|---|---|
 | A | 4.2 | 0.13 | ~3.94 | ✅ Stable |
 | B | 4.2 | 0.90 | ~3.30 | ❌ Too volatile |
 
-Same average. Config A wins — not because it's better on average,
-but because you know what you're getting.
+---
+
+### 📊 Visualisation 3 — Score distributions: histogram comparison
+
+This histogram shows where each config's scores actually land across 30 days.
+Config A's scores pile up tightly around 4.2. Config B's scores split into
+two humps — good days and bad days — with almost nothing in the middle.
+
+![m5_fig3_histograms.png](../notebooks/visualizations/m5_fig3_histograms.png)
 
 ---
 
 ## Now connect this to the Monday ticket
 
-Remember: our Monday ticket has `security_incident` as a possible class.
 A security incident misrouted to a tier-1 agent isn't just a quality dip —
 it's a potential breach.
 
-Now think about what Config B's volatility means in *routing accuracy* terms.
-If routing accuracy bounces between 72% and 96% day-to-day (same average: 87%),
-on a bad day with 500 tickets:
+Config B's routing accuracy bounces between 72% and 96% day-to-day (same average: 87%).
+On a bad day with 500 tickets:
 
 ```
 500 tickets × (1 - 0.72) = 140 misrouted tickets
-5% are security incidents = 7 active threats sent to wrong queue
+5% are security incidents  =   7 active threats sent to wrong queue
 ```
 
-On a good day, that number drops to near zero. You don't know which kind of day
-you're having until it's over.
-
-Config A's routing accuracy, by contrast, stays between 85% and 89%.
-Worst day: `500 × (1 - 0.85) = 75 misrouted`, security incidents ≈ 3–4.
+Config A stays between 85% and 89%. Worst day: ~75 misrouted, 3–4 security incidents.
 Not zero — but predictable enough to staff for.
 
 **Stability isn't just a quality metric. It's a risk management metric.**
@@ -133,27 +147,21 @@ Not zero — but predictable enough to staff for.
 
 ## What drives variance in prompt outputs?
 
-Before you can reduce variance, you need to know where it comes from.
-For the Monday ticket and tickets like it, the usual culprits are:
+**1. Ambiguous ticket language** — tickets mentioning multiple symptoms (account lock
++ VPN + patch notice) give the model more room to interpret differently on each run.
+High-entropy tickets (Module 4) tend to produce high-variance outputs.
 
-**1. Ambiguous ticket language**
-Tickets that mention multiple symptoms (account lock + VPN + patch notice)
-give the model more room to interpret differently on each run.
-High-entropy tickets (from Module 4) tend to produce high-variance outputs.
+**2. Temperature settings** — higher temperature flattens the probability distribution
+and increases randomness. A T=1.5 setting on a production classifier is asking for
+Config B behaviour.
 
-**2. Temperature settings**
-Recall from Module 3: higher temperature flattens the probability distribution
-and increases randomness. Temperature directly controls output variance.
-A T=1.5 setting on a production classifier is asking for Config B behaviour.
-
-**3. Context window changes**
-If conversation history grows and gets truncated differently across runs
-(Module 1), the model sees a slightly different input each time.
+**3. Context window changes** — if conversation history grows and gets truncated
+differently across runs (Module 1), the model sees a slightly different input each time.
 Different input → different output → variance that looks random but isn't.
 
-**The operational rule:** When you see high variance, diagnose *which* of these
-is driving it before you change anything. Lowering temperature when the real
-problem is truncated context just masks the symptom.
+**The operational rule:** Diagnose *which* of these is driving variance before
+changing anything. Lowering temperature when the real problem is truncated context
+just masks the symptom.
 
 ---
 
@@ -161,39 +169,50 @@ problem is truncated context just masks the symptom.
 
 Once you have a standard deviation, this rule tells you what to expect:
 
-- **68%** of days will fall within **±1σ** of the mean
-- **95%** of days will fall within **±2σ** of the mean
-- **99.7%** of days will fall within **±3σ** of the mean
+- **68%** of days fall within **±1σ** of the mean
+- **95%** of days fall within **±2σ** of the mean
+- **99.7%** of days fall within **±3σ** of the mean
 
-For Config A (σ = 0.13):
-- 95% of days: quality between **3.94 and 4.46** — tight, trustworthy
-- Extreme outlier (3σ): quality could drop to **3.81** — still acceptable
+| Config | 95% range (±2σ) | 3σ floor (worst case) | SLA safe? |
+|---|---|---|---|
+| A (σ=0.13) | 3.94 – 4.46 | 3.81 | ✅ Yes |
+| B (σ=0.90) | 2.40 – 6.00 | 1.50 | ❌ No |
 
-For Config B (σ = 0.90):
-- 95% of days: quality between **2.40 and 6.00** — floored at 2.4, theoretical ceiling above 5.0
-- Extreme outlier: quality could theoretically drop to **1.50** — unusable
+The 3σ floor is your **worst-case planning number.** If it falls below your SLA
+minimum quality threshold, the config should never reach production.
 
-The 3σ floor is your **worst-case planning number.** Staff for it.
-If Config B's 3σ floor lands below your SLA minimum quality threshold,
-it should never reach production regardless of its average.
+---
+
+### 📊 Visualisation 4 — The 68-95-99.7 bands for both configs
+
+This chart draws the σ, 2σ, and 3σ bands around the mean for both configs —
+the most direct way to see what "worst realistic day" means in practice.
+
+![m5_fig4_sigma_bands.png](../notebooks/visualizations/m5_fig4_sigma_bands.png)
 
 ---
 
 ## The go/no-go decision framework
 
-Before deploying any new prompt configuration, require it to pass both gates:
-
 ```
-Gate 1 — Mean:       μ ≥ your quality floor (e.g. 4.0 / 5)
-Gate 2 — Stability:  σ ≤ your variance ceiling (e.g. 0.25)
+Gate 1 — Mean:       μ ≥ 4.0   (quality floor)
+Gate 2 — Stability:  σ ≤ 0.25  (variance ceiling)
 ```
 
-If it passes Gate 1 but fails Gate 2: it's too unpredictable. Keep tuning.
-If it fails Gate 1: it's not good enough on average. Fundamental rework needed.
-Only pass both: deploy to production.
+| Config | Gate 1 (μ ≥ 4.0) | Gate 2 (σ ≤ 0.25) | Decision |
+|---|---|---|---|
+| A | 4.2 ✅ | 0.13 ✅ | **Deploy** |
+| B | 4.2 ✅ | 0.90 ❌ | **Do not deploy** |
 
-Config A: μ = 4.2 ✅, σ = 0.13 ✅ → **Deploy**
-Config B: μ = 4.2 ✅, σ = 0.90 ❌ → **Do not deploy**
+---
+
+### 📊 Visualisation 5 — The go/no-go gate as a scatter plot
+
+Plot mean vs standard deviation for multiple prompt configs. The green quadrant
+(high mean, low variance) is the deploy zone. Everything else is held back.
+This chart becomes reusable for every future config evaluation.
+
+![m5_fig5_gonogo_scatter.png](../notebooks/visualizations/m5_fig5_gonogo_scatter.png)
 
 ---
 
@@ -201,10 +220,16 @@ Config B: μ = 4.2 ✅, σ = 0.90 ❌ → **Do not deploy**
 
 Open `notebooks/math-foundations/05_variance_stddev.ipynb` and work through:
 
-1. Calculate mean, variance, and standard deviation for Config A and B by hand, then verify with code
-2. Apply the 68-95-99.7 rule to find the realistic worst-case quality floor for each config
-3. Build the two-gate go/no-go decision and run it on three new prompt configs (provided in the notebook)
-4. Investigate: does Config B's variance correlate with ticket entropy? (Hint: it should)
+1. Run Visualisation 1 — confirm with your own eyes that the averages look the same
+   before the line charts reveal the difference
+2. Calculate mean, variance, and standard deviation for Config A and B by hand,
+   then verify against the `print()` output in Visualisation 1
+3. Run Visualisation 4 — find the day in Config B's 30-day history where the score
+   dropped below the SLA floor. How many such days were there?
+4. Add two new configs to Visualisation 5 and place them in the scatter plot —
+   do they land in the deploy zone?
+5. Investigate: does Config B's daily variance correlate with average ticket
+   entropy that day? (Hint: it should — high-entropy days drive high-variance outputs)
 
 ---
 
@@ -215,5 +240,18 @@ Open `notebooks/math-foundations/05_variance_stddev.ipynb` and work through:
 - [ ] Have you set an explicit σ ceiling for your go/no-go deployment gate?
 - [ ] Do you investigate the *source* of variance (temperature, truncation, ambiguity) before patching it?
 - [ ] Are you tracking stability week-to-week, not just at deployment time?
+
+---
+
+## Where Module 6 picks up
+
+We now know Config A is stable enough to deploy. But here's a new question:
+
+> *"Run Config A on the Monday ticket twice — same ticket, same config.
+> Do you get the same routing decision both times?"*
+
+Sometimes yes. Sometimes no. It depends on whether the system is running in
+deterministic or stochastic mode — and whether you made that choice deliberately.
+That's what Module 6 is about.
 
 --8<-- "_abbreviations.md"

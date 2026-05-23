@@ -145,6 +145,72 @@ If your average top-class confidence was 0.78 last month and it's 0.61 this mont
 
 ---
 
+# Module 02 — Probability: visualization notes
+
+Four visualizations accompany the Module 02 article. This file describes each one and what it illustrates.
+
+---
+
+## Visual 1 — Classifier output bars
+
+**What it shows:** The raw classifier output for the Monday ticket as three horizontal bars, proportional to probability. A summary panel below shows the sum check (1.000 ✓), the margin between top and second class (0.190 ⚠), and the auto-route threshold check (0.576 < 0.80 ✗).
+
+**Key insight:** The thin margin of 0.190 is as important as the top score of 0.576. A wide bar with a narrow lead is not a confident classification.
+
+![fig1_classifier_output.png](../notebooks/visualizations/fig1_classifier_output.png)
+
+---
+
+## Visual 2 — Confidence ladder
+
+**What it shows:** Four routing tiers as a vertical stack of colored bands. Each band shows the score range, what it signals, and what action to take. A pointer arrow marks where the Monday ticket (0.576) lands — in the clarification queue band, not auto-route.
+
+**Key insight:** The ladder makes the routing policy visible. Without it, decisions live in someone's head and vary by analyst. With it, the policy is structural.
+
+| Band | Score | Action |
+|:---|:---|:---|
+| High confidence | ≥ 0.80 | Auto-route |
+| Moderate | 0.60–0.79 | Route with flag |
+| Low | 0.40–0.59 | Clarification queue |
+| No clear winner | < 0.40 | Escalate immediately |
+
+![fig2_confidence_ladder.png](../notebooks/visualizations/fig2_confidence_ladder.png)
+
+---
+
+## Visual 3 — Expected value staffing calculator (interactive)
+
+**What it shows:** An interactive slider for ticket volume. Fixed cards show the three components of the expected value calculation:
+
+$$
+\mathbb{E}[X] = (0.576 \times 4) + (0.386 \times 18) + (0.039 \times 45) = 11.01 \text{ min/ticket}
+$$
+
+Dragging the slider updates: total minutes, agent-hours needed, and agents required for an 8-hour shift.
+
+**Key insight:** At 500 tickets, 11.01 min/ticket = 5,505 minutes = ~92 agent-hours. You are not guessing at staffing — you are planning from the probability distribution.
+
+![fig3_expected_value.png](../notebooks/visualizations/fig3_expected_value.png)
+
+---
+
+## Visual 4 — Misrouting reality bars
+
+**What it shows:** Four horizontal bars representing four confidence levels (0.95, 0.82, 0.576, 0.40). Each bar is sized to show the number of wrong routes per 1,000 tickets at that confidence level.
+
+| Confidence | Wrong per 1,000 | Status |
+|:---|:---|:---|
+| 0.95 | 50 | Auto-route safe |
+| 0.82 | 180 | Borderline — flag |
+| 0.576 | 424 | Monday ticket — do not auto-route |
+| 0.40 | 600 | Escalate immediately |
+
+**Key insight:** 0.82 sounds like "basically confirmed." It means 180 wrong tickets per 1,000 — 18 per day at 100 tickets/day, silently, with no error message. The number is the warning.
+
+![fig4_misroute_reality.png](../notebooks/visualizations/fig4_misroute_reality.png)
+
+---
+
 ## How to practice this
 
 Open `notebooks/math-foundations/02_probability.ipynb` and work through:
