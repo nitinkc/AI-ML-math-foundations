@@ -198,12 +198,12 @@ Dragging the slider updates: total minutes, agent-hours needed, and agents requi
 
 **What it shows:** Four horizontal bars representing four confidence levels (0.95, 0.82, 0.576, 0.40). Each bar is sized to show the number of wrong routes per 1,000 tickets at that confidence level.
 
-| Confidence | Wrong per 1,000 | Status |
-|:---|:---|:---|
-| 0.95 | 50 | Auto-route safe |
-| 0.82 | 180 | Borderline — flag |
-| 0.576 | 424 | Monday ticket — do not auto-route |
-| 0.40 | 600 | Escalate immediately |
+| Confidence | Wrong per 1,000 | Status                            |
+|:-----------|:----------------|:----------------------------------|
+| 0.95       | 50              | Auto-route safe                   |
+| 0.82       | 180             | Borderline — flag                 |
+| 0.576      | 424             | Monday ticket — do not auto-route |
+| 0.40       | 600             | Escalate immediately              |
 
 **Key insight:** 0.82 sounds like "basically confirmed." It means 180 wrong tickets per 1,000 — 18 per day at 100 tickets/day, silently, with no error message. The number is the warning.
 
