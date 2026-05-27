@@ -40,12 +40,12 @@ $$
 T_{total} = T_{system} + T_{history} + T_{user} + T_{output}
 $$
 
-| Part | What it is | Example size |
-|---|---|---|
-| $T_{system}$ | Your instructions to the model ("You are a helpful IT assistant...") | 200–800 tokens |
-| $T_{history}$ | Every prior message in the conversation | Grows fast — 50 turns ≈ 5,000+ tokens |
-| $T_{user}$ | The current ticket or message | 20–300 tokens |
-| $T_{output}$ | Space reserved for the model's reply | 500–2,000 tokens |
+| Part          | What it is                                                           | Example size                          |
+|:--------------|:---------------------------------------------------------------------|:--------------------------------------|
+| $T_{system}$  | Your instructions to the model ("You are a helpful IT assistant...") | 200–800 tokens                        |
+| $T_{history}$ | Every prior message in the conversation                              | Grows fast — 50 turns ≈ 5,000+ tokens |
+| $T_{user}$    | The current ticket or message                                        | 20–300 tokens                         |
+| $T_{output}$  | Space reserved for the model's reply                                 | 500–2,000 tokens                      |
 
 **The hard rule: $T_{total}$ cannot exceed your context window.** Most models today allow 8,000–200,000 tokens, but cheaper/faster tiers cap at 4,000–8,000. If you hit the wall, the model silently drops the oldest messages — and with them, critical context.
 
